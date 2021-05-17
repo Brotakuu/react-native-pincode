@@ -11,6 +11,7 @@ import { View, StyleSheet, StyleProp, ViewStyle, TextStyle } from "react-native"
 import * as SecureStore from 'expo-secure-store'
 
 export type IProps = {
+  alphabetCharsVisible?: boolean
   bottomLeftComponent?: any
   buttonComponentLockedPage?: any
   buttonDeleteComponent?: any
@@ -44,6 +45,7 @@ export type IProps = {
   status: "choose" | "enter" | "locked"
   storedPin?: string
   storePin?: any
+  styleAlphabet?: StyleProp<TextStyle>
   styleMainContainer?: StyleProp<ViewStyle>
   stylePinCodeChooseContainer?: StyleProp<ViewStyle>
   stylePinCodeEnterContainer?: StyleProp<ViewStyle>
@@ -194,6 +196,7 @@ class PINCode extends React.PureComponent<IProps, IState> {
       <View style={[styles.container, styleMainContainer]}>
         {status === PinStatus.choose &&
           <PinCodeChoose
+            alphabetCharsVisible={this.props.alphabetCharsVisible}
             buttonDeleteComponent={this.props.buttonDeleteComponent}
             buttonDeleteText={this.props.buttonDeleteText}
             buttonNumberComponent={this.props.buttonNumberComponent}
@@ -212,6 +215,7 @@ class PINCode extends React.PureComponent<IProps, IState> {
             pinCodeKeychainName={this.props.pinCodeKeychainName || pinCodeKeychainNameDefault}
             pinCodeVisible={this.props.pinCodeVisible}
             storePin={this.props.storePin || null}
+            styleAlphabet={this.props.styleAlphabet}
             styleButtonCircle={this.props.stylePinCodeButtonCircle}
             styleCircleHiddenPassword={this.props.stylePinCodeHiddenPasswordCircle}
             styleCircleSizeEmpty={this.props.stylePinCodeHiddenPasswordSizeEmpty}
@@ -256,6 +260,7 @@ class PINCode extends React.PureComponent<IProps, IState> {
           />}
         {status === PinStatus.enter &&
           <PinCodeEnter
+            alphabetCharsVisible={this.props.alphabetCharsVisible}
             passcodeFallback={this.props.passcodeFallback}
             buttonDeleteComponent={this.props.buttonDeleteComponent}
             buttonDeleteText={this.props.buttonDeleteText}
@@ -285,6 +290,7 @@ class PINCode extends React.PureComponent<IProps, IState> {
             pinStatusExternal={this.props.pinStatus || PinResultStatus.initial}
             status={PinStatus.enter}
             storedPin={this.props.storedPin || null}
+            styleAlphabet={this.props.styleAlphabet}
             styleButtonCircle={this.props.stylePinCodeButtonCircle}
             styleCircleHiddenPassword={this.props.stylePinCodeHiddenPasswordCircle}
             styleCircleSizeEmpty={this.props.stylePinCodeHiddenPasswordSizeEmpty}

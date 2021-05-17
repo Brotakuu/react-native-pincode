@@ -21,6 +21,7 @@ import * as LocalAuthentication from 'expo-local-authentication'
  */
 
 export interface IProps {
+  alphabetCharsVisible?: boolean
   buttonDeleteComponent: any
   buttonDeleteText?: string
   buttonNumberComponent: any
@@ -49,6 +50,7 @@ export interface IProps {
   pinStatusExternal: PinResultStatus
   status: PinStatus
   storedPin: string | null
+  styleAlphabet?: StyleProp<TextStyle>
   styleButtonCircle?: StyleProp<ViewStyle>
   styleCircleHiddenPassword?: StyleProp<ViewStyle>
   styleCircleSizeEmpty?: number
@@ -160,8 +162,9 @@ class PinCodeEnter extends React.PureComponent<IProps, IState> {
     if (!!this.props.endProcessFunction) {
       this.props.endProcessFunction(pinCode as string)
     } else {
+      let pinValidOverride = undefined;
       if (this.props.handleResult) {
-        this.props.handleResult(pinCode)
+        pinValidOverride = await Promise.resolve(this.props.handleResult(pinCode));
       }
       this.setState({ pinCodeStatus: PinResultStatus.initial })
       this.props.changeInternalStatus(PinResultStatus.initial)
@@ -171,7 +174,7 @@ class PinCodeEnter extends React.PureComponent<IProps, IState> {
       )
       let pinAttempts = pinAttemptsStr ? +pinAttemptsStr : 0
       const pin = this.props.storedPin || this.keyChainResult
-      if (pin === pinCode) {
+      if (pinValidOverride !== undefined ? pinValidOverride : pin === pinCode) {
         this.setState({ pinCodeStatus: PinResultStatus.success })
         await SecureStore.deleteItemAsync(this.props.pinAttemptsAsyncStorageName);
         await SecureStore.deleteItemAsync(this.props.timePinLockedAsyncStorageName);
@@ -264,6 +267,7 @@ class PinCodeEnter extends React.PureComponent<IProps, IState> {
           this.props.styleContainer
         ]}>
         <PinCode
+          alphabetCharsVisible={this.props.alphabetCharsVisible}
           buttonDeleteComponent={this.props.buttonDeleteComponent || null}
           buttonDeleteText={this.props.buttonDeleteText}
           buttonNumberComponent={this.props.buttonNumberComponent || null}
@@ -287,6 +291,7 @@ class PinCodeEnter extends React.PureComponent<IProps, IState> {
           previousPin={pin}
           sentenceTitle={this.props.title}
           status={PinStatus.enter}
+          styleAlphabet={this.props.styleAlphabet}
           styleButtonCircle={this.props.styleButtonCircle}
           styleCircleHiddenPassword={this.props.styleCircleHiddenPassword}
           styleCircleSizeEmpty={this.props.styleCircleSizeEmpty}
